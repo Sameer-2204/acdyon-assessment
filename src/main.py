@@ -76,6 +76,18 @@ app = FastAPI(
 )
 
 
+@app.get("/")
+async def root():
+    """Small landing response for reviewers opening the service URL."""
+    return {
+        "service": "Anti-Bot Job Scraper",
+        "status": "ok",
+        "docs": "/docs",
+        "health": "/health",
+        "jobs": "/jobs",
+    }
+
+
 @app.get("/health")
 async def health():
     """
