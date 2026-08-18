@@ -77,7 +77,10 @@ USER_AGENTS = [
 DEFAULT_HEADERS = {
     "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
     "Accept-Language": "en-US,en;q=0.9",
-    "Accept-Encoding": "gzip, deflate, br",
+    # Only advertise codecs httpx can decode with the pinned dependencies.
+    # Advertising Brotli without installing a Brotli decoder can make an
+    # otherwise healthy upstream response fail during decompression.
+    "Accept-Encoding": "gzip, deflate",
     "Connection": "keep-alive",
     "Cache-Control": "no-cache",
 }

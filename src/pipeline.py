@@ -55,8 +55,16 @@ class Pipeline:
         self.last_scrape_time: str | None = None
         self.last_scrape_source: str | None = None
         self.last_result: ScrapeResult | None = None
+        # The scheduler and POST /scrape share one pipeline. Serialize cycles
+        # so a manual trigger cannot create a burst of concurrent upstream
+        # requests while the scheduled cycle is still running.
+        self._cycle_lock = asyncio.Lock()
 
     async def run_once(self) -> ScrapeResult | None:
+        async with self._cycle_lock:
+            return await self._run_once()
+
+    async def _run_once(self) -> ScrapeResult | None:
         """
         Run a single scrape cycle. Tries sources in priority order.
 
